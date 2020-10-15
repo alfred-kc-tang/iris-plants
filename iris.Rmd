@@ -1,0 +1,101 @@
+---
+title: "K-means clustering on iris plants"
+author: "Alfred Ka Chau Tang"
+date: "10/6/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Hyperparamter Tuning using Elbow Diagram
+
+There is one hyperparameter that needs to be tuned for k-means clustering, namely the number of clusters k. By using the elbow diagram, we can make the decision by picking the k that leads to a noticeable reduction in the sum of square errors.
+
+```{r}
+library(datasets)
+scaled_iris <- scale(iris[,1:4])
+k_max <- 15
+wcss <- sapply(1:k_max, function(k) {
+  kmeans(as.matrix(scaled_iris), centers = k, nstart = 20)$tot.withinss
+})
+plot(1:k_max, wcss, type = "b", main = "Elbow Diagram", 
+     xlab = "Number of k Clusters", 
+     ylab = "Total Within-cluster Sum of Squares")
+```
+
+In order to find the best value of k, I used the available component "tot.withinss", i.e. total within-cluster sum of squares, given by the k-means function. It gives the sum of distances between each point and the mean of the cluster it is assigned to for each of the models with different k values from 1 to 15. Here I used the sapply function, which uses vectorized operations instead of for loops to make code faster and more concise, to try out these different values of k. By plotting the total within-cluster sum of squares on the y-axis versus the number of k on the x-axis, the elbow diagram is shown above. As the elbow diagram indicates, there are significant decreases up to 3, after which decreases are much slower. So I would pick 3 as the best value of k, as it is the highest value of k after which diminishing returns occur.
+
+Before building the k-means clustering model using 3 as the k value, I found the following code that shows the animation of different steps in the clustering processes that helps illustrate the modeling process.
+
+```{r}
+# install.packages('animation')
+library(animation)
+kmeans.ani(scaled_iris, centers = 3)
+# saveGIF(kmeans.ani(scaled_iris, centers = 3), movie.name = "kmeans.gif")
+```
+
+# Model Performance After Tuning
+
+Let me create the k-means clustering model using 3 as the k value as shown below:
+
+```{r}
+kmc_model <- kmeans(scaled_iris, centers = 3, nstart = 20)
+kmc_model
+```
+
+Confusion matrix is a good way to present its prediction accuracy.
+
+```{r}
+conf_mat <- table(kmc_model$cluster, iris$Species)
+conf_mat
+```
+
+As the confusion matrix shows, data points in cluster 1 are dominantly virginica, so data points in this cluster are predicted to be virginica; data points in cluster 2 are all setosa, so data points in that cluster are predicted to be setosa; data points in cluster 3 are mostly versicolor, so data points in the cluster are predicted to be versicolor.
+
+In order to obtain a scalar value as a performance measure of the model, I would like to extract the dominant response classes in the cluster and sum them up for all the clusters.
+
+```{r}
+correct_pred <- 0
+for (i in 1:nrow(conf_mat)){
+  correct_pred <- correct_pred + max(conf_mat[i,])
+}
+acc <- correct_pred / nrow(iris)
+acc
+```
+
+The prediction accuracy of the k-means clustering model using 3 as the k value is `r acc`.
+
+# One Step Further: Variable Selection for the Model
+
+There are many possible combinations of explanatory variables combined with different k values, but do not plan to exhaust all of them in order to find out the best combination of predictors. Since some combinations of explanatory variables would be in different dimensions (if we denote the four predictors V1, V2, V3 and V4 respectively, possible combinations of predictors are: (1) V1, (2) V2, (3) V3, (4) V4, (5) V1 + V2, (6) V1 + V3, (7) V1 + V4, (8) V2 + V3, (9) V2 + V4, (10) V3 + V4, (11) V1 + V2 + V3, (12) V1 + V2 + V4, (13) V1 + V3 + V4, (14) V2 + V3 + V4, (15) V1 + V2 + V3 + V4).
+
+The distances between data points and their clusters are one-dimension if the model uses only one predictor while the distances are four-dimension if the model uses all four predictors, so it is not possible to compare them in terms of total within-cluster sum of squares. For this very reason, I would use 3 as the standard k value for comparing models using these different combinations of predictors.
+
+```{r}
+for (i in 1:4){
+  # obtain all the possible combinations
+  combn_vec <- combn(c(1, 2, 3, 4), i)
+  # build the confusion matrix for each of the combination
+  for (j in 1:ncol(combn_vec)){
+    combn_pred <- c(combn_vec[1:i, j])
+    kmc_model_combn <- kmeans(scaled_iris[,combn_pred], 
+                              centers = 3, nstart = 20)
+    conf_mat_combn <- table(kmc_model_combn$cluster, iris$Species)
+    correct_pred_combn <- 0
+    for (k in 1:nrow(conf_mat_combn)){
+      correct_pred_combn <- correct_pred_combn + max(conf_mat_combn[k,])
+    }
+    acc_combn <- correct_pred_combn / nrow(iris)
+    cat("accuracy of the model using predictor variable(s)", 
+        combn_pred, ":\n", acc_combn, "\n")
+  }
+}
+```
+
+Here I looped over each of the possible combinations of predictors to build the k-means clustering models using 3 as the standard k value, and then build their corresponding confusion matrix, so that I can measure prediction accuracy of all the models by using the dominant class in the clusters as the predicted responses for the respective clusters.
+
+As we can see, models using only predictor variable 4 or the combination of predictor variables 3 and 4 have the best performance. By Occam's razor, the best model is the one that uses explanatory variable 4, resulting in the accuracy of 0.96.
