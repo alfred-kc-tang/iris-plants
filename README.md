@@ -21,7 +21,6 @@ The data set is obtained from the [UCI Machine Learning Repository](https://arch
 
 K-means clustering groups data points into a predefined number of clusters. Oftentimes, the algorithm started with a random set of centroids, i.e. as the centers of the clusters. Then it iterates the following two steps back and forth until convergence: (1) count data points into the cluster whose centroid is nearest to them, (2) each of the centroids is redefined as the mean of the data points in its corresponding clusters. As the algorithm is usually set to terminate when the centroids are no longer changed, i.e. no point belongs to a cluster whose centroid is closer than the centroid of its current cluster. That is to say, it terminates only when it converges to a local optimum with the least within-cluster sum of squares by its very design. In any case, it can be proved that the algorithm converges to a local optimum in finite steps. We can see how the algorithm groups the data into clusters in the following GIF: 
 
-![kmeans animation](https://github.com/alfred-kctang/iris-plants/blob/master/kmeans.gif)
 <p align="center">
   <img src="https://github.com/alfred-kctang/iris-plants/blob/master/kmeans.gif?raw=true" alt="pkmeans animation"/>
 </p>
