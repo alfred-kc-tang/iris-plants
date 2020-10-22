@@ -7,6 +7,7 @@
 * [Methodology](#methodology)
 * [Findings](#findings)
 * [Keywords](#keywords)
+* [Coding Style](#codingstyle)
 * [License](#license)
 
 ## Goal
@@ -42,6 +43,10 @@ However, I went one step further to perform variable selection in order to see i
 ## Keywords
 
 clustering, k-means clustering, unsupervised learning, variable selection
+
+## Coding Style
+
+This projects follows [Google's R Style Guide](https://google.github.io/styleguide/Rguide.html), which is a fork of the [Tidyverse Style Guide](https://style.tidyverse.org/) by Hadley Wickham.
 
 ## License
 
