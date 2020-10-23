@@ -1,4 +1,4 @@
-# [K-Means Clustering on Iris Data Set](https://alfred-kctang.github.io/iris-plants/)
+# [K-Means Clustering on Iris Plants](https://alfred-kctang.github.io/iris-plants/)
 
 ## Table of Contents
 
