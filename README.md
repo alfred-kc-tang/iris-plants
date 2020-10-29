@@ -30,11 +30,11 @@ As the algorithm is usually set to terminate when the centroids are no longer ch
 
 ## Findings
 
+In order to find the best value of k, I used the available component “tot.withinss”, i.e. total within-cluster sum of squares, given by the k-means function. It gives the sum of distances between each point and the mean of the cluster it is assigned to for each of the models with different k values from 1 to 15. Here I used the sapply function, which uses vectorized operations instead of for loops to make code faster and more concise, to try out these different values of k. By plotting the total within-cluster sum of squares on the y-axis versus the number of k on the x-axis, the elbow diagram is shown below.
+
 <p align="center">
   <img src="https://github.com/alfred-kctang/iris-plants/blob/master/elbow_diagram.png?raw=true" alt="elbow diagram"/>
 </p>
-
-In order to find the best value of k, I used the available component “tot.withinss”, i.e. total within-cluster sum of squares, given by the k-means function. It gives the sum of distances between each point and the mean of the cluster it is assigned to for each of the models with different k values from 1 to 15. Here I used the sapply function, which uses vectorized operations instead of for loops to make code faster and more concise, to try out these different values of k. By plotting the total within-cluster sum of squares on the y-axis versus the number of k on the x-axis, the elbow diagram is shown above.
 
 As the elbow diagram indicates, there are significant decreases up to 3, after which decreases are much slower. So I would pick 3 as the best value of k, as it is the highest value of k after which diminishing returns occur. The prediction accuracy of the model is 0.83.
 
