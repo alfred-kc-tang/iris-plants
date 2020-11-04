@@ -46,7 +46,7 @@ clustering, k-means clustering, unsupervised learning, variable selection
 
 ## Coding Style
 
-This projects follows [Google's R Style Guide](https://google.github.io/styleguide/Rguide.html), which is a fork of the [Tidyverse Style Guide](https://style.tidyverse.org/) by Hadley Wickham.
+This project follows [Google's R Style Guide](https://google.github.io/styleguide/Rguide.html), which is a fork of the [Tidyverse Style Guide](https://style.tidyverse.org/) by Hadley Wickham.
 
 ## License
 
